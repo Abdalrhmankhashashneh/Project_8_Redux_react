@@ -65,7 +65,8 @@ export const deletePosts = createAsyncThunk('posts/deletePosts',
 
 const initialState = {
     posts: [],
-    poast: {},
+    post: {},
+    isLoggin: false,
     loading: false,
     message: '',
 }
@@ -79,6 +80,7 @@ const postSlice = createSlice({
         }
     },
     extraReducers: {
+
         // getPosts is a reducer that handles the getPosts action
 
         [getPosts.pending]: (state, action) => {
