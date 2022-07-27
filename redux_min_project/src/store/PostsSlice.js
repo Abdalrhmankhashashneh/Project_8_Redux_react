@@ -63,12 +63,36 @@ export const deletePosts = createAsyncThunk('posts/deletePosts',
     }
 )
 
+export const loginUser = createAsyncThunk('posts/loginUser',
+    async (user, thunkAPI) => {
+        const response = await axios({
+            method: 'post',
+            url: 'http://127.0.0.1:8000/api/post/login',
+            data: user,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        thunkAPI.dispatch(getPosts())
+        console.log(response.data.error);
+        if (response.data.error == "User not found") {
+
+            console.log("working");
+        }
+
+
+        return response.data
+    }
+)
+
+
 const initialState = {
     posts: [],
     post: {},
-    isLoggin: false,
+    isloggin: false,
     loading: false,
     message: '',
+    user: {},
 }
 
 const postSlice = createSlice({
@@ -82,7 +106,6 @@ const postSlice = createSlice({
     extraReducers: {
 
         // getPosts is a reducer that handles the getPosts action
-
         [getPosts.pending]: (state, action) => {
             state.loading = true
             state.message = 'am pending'
@@ -143,6 +166,32 @@ const postSlice = createSlice({
             state.loading = false
             state.message = 'am soorry'
         }
+        ,
+
+        //login user is a reducer that handles the loginUser action
+        [loginUser.pending]: (state, action) => {
+            state.loading = true
+            state.message = 'am pending'
+        }
+        ,
+        [loginUser.fulfilled]: (state, action) => {
+            state.user = action.payload
+            if (action.payload == "User not found") {
+
+                state.isloggin = false
+            }
+            else {
+                state.isloggin = true
+            }
+            state.loading = false
+            state.message = 'am done'
+        }
+        ,
+        [loginUser.rejected]: (state, action) => {
+            state.loading = false
+            state.message = 'am soorry'
+        }
+
     }
 })
 export const { setPost } = postSlice.actions
